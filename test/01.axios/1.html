@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn1">按钮1</button>
+  <button id="btn2">按钮2</button>
+  <button id="btn3">按钮3</button>
+  <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+  <script>
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+    const btn3 = document.getElementById('btn3');
+
+    let token = '';
+
+    btn1.onclick = function () {
+      //发送请求
+      axios({
+          // OPTIONS检查请求能不能跨域
+          method: 'POST',
+          url: 'http://localhost:5000/api/login',
+          // data: {
+          //   username: 'admin',
+          //   password: 'admin'
+          // },
+          //两种POST的请求方式 看content-type
+
+          data: 'username=admin&password=admin',
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then(response => {
+          if (response.data.status === 0) {
+            console.log(response.data.data);
+            token = response.data.data.token; // btn2需要用到btn1返回出来的token，先存起来
+          } else {
+            alert(response.data.msg)
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          alert('网络出错')
+        })
+    }
+
+    btn2.onclick = function () {
+      axios({
+          method: 'GET',
+          url: 'http://localhost:5000/api/category/get',
+          headers: {
+            // authorization每个借口都需要的Header参数值(登录接口不需要)
+            authorization: 'Bearer ' + token
+          }
+        })
+        .then(response => {
+          if (response.data.status === 0) {
+            console.log(response.data.data);
+          } else {
+            alert(response.data.msg)
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          alert('网络出错')
+        })
+    }
+    btn3.onclick = function () {
+      axios({
+          method: 'POST',
+          url: 'http://localhost:5000/api/category/add',
+          data: 'categoryName=鼠标', // categoryName这个key文档(8.3)里有,鼠标这个value随便写
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            authorization: 'Bearer ' + token
+          }
+        })
+        .then(response => {
+          if (response.data.status === 0) {
+            console.log(response.data.data);
+          } else {
+            alert(response.data.msg)
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          alert('网络出错')
+        })
+    }
+  </script>
+</body>
+
+</html>
