@@ -116,7 +116,7 @@ class Login extends Component {
                 getFieldDecorator(
                   'password',
                   {
-                    rules: [
+              #      rules: [
                       {
                         validator: this.validator
                       }
