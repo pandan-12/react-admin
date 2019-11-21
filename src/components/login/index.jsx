@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Icon, message } from 'antd';
-import axios from 'axios';
+import { reqLogin } from '../../api/index';
 import logo from './logo.png';
 import './index.less'
 
@@ -39,24 +39,19 @@ class Login extends Component {
   login = (e) => {
     console.log(1);
 
+    const { form } = this.props;
+
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    form.validateFields((err, values) => {
       if (!err) {
         console.log(1);
-
-        axios
-          .post('http://localhost:5000/api/login', values)
+        const { username, password } = values; // 拿到valus
+        reqLogin(username, password)
           .then(response => {
-            if (response.data.status === 0) {
-              this.props.history.push('/')
-            } else {
-              message.error(response.data.msg)
-              this.props.form.resetFields(['password'])
-            }
+            this.props.history.push('/'); // 成功就跳转网址
           })
           .catch((err) => {
-            message.error('网络错误')
-            this.props.form.resetFields(['password'])
+            form.resetFields(['password']); // 失败就清空数据
           })
       }
     })
@@ -116,7 +111,7 @@ class Login extends Component {
                 getFieldDecorator(
                   'password',
                   {
-              #      rules: [
+                    rules: [
                       {
                         validator: this.validator
                       }
