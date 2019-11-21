@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn1">按钮1</button>
+  <button id="btn2">按钮2</button>
+  <button id="btn3">按钮3</button>
+  <!-- <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script> -->
+  <script src="../../node_modules/axios/dist/axios.js"></script>
+  <script>
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+    const btn3 = document.getElementById('btn3');
+
+    // let token = '';
+    let token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZDMzYzgzMjE4MjdhYWNmNDhlMzAxZCIsImlhdCI6MTU3NDMxNzk2NCwiZXhwIjoxNTc0OTIyNzY0fQ.optwXWPpJA3XBsB5IOPv-dAUT5Un2YhCKkf47oyP4ws';
+
+    // 能够拿到axios的实例对象,axios.create就能够创建一个实例对象
+    // axiosInstance就是Axios实例对象,用法和axios基本一样
+    const axiosInstance = axios.create({
+      baseURL: 'http://localhost:5000/api', // 基础路径,所有请求的公共路径
+      timeout: 1000, // 超时 单位是ms 如果响应超过5s都没有响应结果,就自动中断请求
+      headers: {
+        // 公共的请求头参数,不放动态参数
+
+      }
+    })
+
+    axiosInstance.interceptors.request.use(
+      // 将要发送请求成功的 (内部没错) 触发回调函数
+      (config) => {
+        if (config.method === 'post') {
+          config.headers['content-type'] = 'application/x-www-form-urlencoded';
+          config.data = Object.keys(config.data).reduce((prev, key) => { //
+            const value = config.data[key]; // 拿到value
+
+            return prev + `&${key}=${value}` // 之前的值加上现在的值需要用&链接
+          }, '').substring(1) // '' 第二个参数想让它变成什么类型就写 这里是字符串类型
+          //  substring截取
+        }
+
+        if (token) {
+          config.headers['authorization'] = `Bearer ${token}`
+        }
+        return config;
+      },
+
+      // 将要发送请求失败的 (内部出错) 触发回调函数
+      // (error) => {
+      //   // 一般没用所以一般不写
+      //   return Promise.reject(error);
+      // }
+    )
+
+
+    // 响应拦截
+    axiosInstance.interceptors.response.use(
+      // 响应成功
+      (response) => {
+        if (response.data.status === 0) {
+          return response.data.data
+        } else {
+          alert(response.data.msg)
+          return Promise.reject(response.data.msg);
+        }
+      },
+
+      // 响应失败
+      (error) => {
+
+        const listMessage = {
+          401: '没有权限',
+          403: '禁止访问',
+          404: '找不到资源',
+          500: '故障请给管理员烧纸'
+        }
+
+        let errorMessage = '';
+
+        if (error.response) {
+          errorMessage = listMessage[error.response.status] || '未知错误'
+        } else {
+          if (error.message.indexOf('Network Error') !== -1) {
+            errorMessage = '请检查网络';
+          } else if (error.message.indexOf('timeout') !== -1) {
+            errorMessage = '网太卡,建议砸电脑';
+          } else {
+            errorMessage = '未知错误'
+          }
+        }
+
+        console.log(error); // 这个error是个对象 其中的message就是显示错误内容
+        alert(errorMessage)
+        return Promise.reject(errorMessage)
+      }
+    )
+
+
+
+
+    btn1.onclick = function () {
+      //发送请求
+      axiosInstance({
+          // OPTIONS检查请求能不能跨域
+          method: 'post',
+          url: '/login',
+          data: {
+            username: 'admin',
+            password: 'admin'
+          },
+          //两种POST的请求方式 看content-type
+
+          // data: 'username=admin&password=admin',
+          // headers: {
+          //   'content-type': 'application/x-www-form-urlencoded'
+          // }
+        })
+        .then(response => {
+          console.log(response);
+          token = response.token; // btn2需要用到btn1返回出来的token，先存起来
+          console.log(token);
+
+          // token = response.data.data.token // 函数里返回了data.data 这里直接写response
+        })
+      // .catch(error => {
+      //   console.log(error);
+      //   alert('网络出错')
+      // })
+      // 函数内alert 这里就不要
+    }
+
+    btn2.onclick = function () {
+      axiosInstance({
+          method: 'GET',
+          url: '/category/get',
+          // headers: {
+          //   // authorization每个借口都需要的Header参数值(登录接口不需要)
+          //   authorization: 'Bearer ' + token
+          // }
+        })
+        .then(response => {
+          console.log(response);
+        })
+    }
+    btn3.onclick = function () {
+      axiosInstance({
+          method: 'POST',
+          // url: 'http://localhost:5000/api/category/add',
+          url: '/category/add', //前面封装了公共地址
+          //data: 'categoryName=键盘', // categoryName这个key文档(8.3)里有,鼠标这个value随便写
+          data: {
+            categoryName: '键盘'
+          }
+          // headers: {
+          //   'content-type': 'application/x-www-form-urlencoded',
+          //   authorization: 'Bearer ' + token
+          // }
+        })
+        .then(response => {
+          console.log(response);
+        })
+    }
+  </script>
+</body>
+
+</html>
