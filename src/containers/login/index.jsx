@@ -3,6 +3,7 @@ import { Form, Input, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { getUserAsync } from '../../redux/action-creators/user'
 // import { reqLogin } from '../../api/index';
+import { setItem } from '../../utils/storage'
 import logo from '../../assets/logo.png';
 import './index.less'
 
@@ -51,6 +52,8 @@ class Login extends Component {
         const { username, password } = values; // 拿到valus
         this.props.getUserAsync(username, password)
           .then(response => {
+            // 持久化存储用户数据
+            setItem('user', response)
             this.props.history.push('/'); // 成功就跳转网址
           })
           .catch((err) => {
