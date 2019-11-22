@@ -3,7 +3,7 @@ import { Form, Input, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { getUserAsync } from '../../redux/action-creators/user'
 // import { reqLogin } from '../../api/index';
-import logo from './logo.png';
+import logo from '../../assets/logo.png';
 import './index.less'
 
 const { Item } = Form; //提取From其中的组件Item

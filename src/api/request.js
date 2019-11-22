@@ -3,6 +3,7 @@ import listMessage from '../config/listMessage';
 import {
   message
 } from 'antd';
+import store from '../redux/store';
 
 // 能够拿到axios的实例对象,axios.create就能够创建一个实例对象
 // axiosInstance就是Axios实例对象,用法和axios基本一样
@@ -27,7 +28,11 @@ axiosInstance.interceptors.request.use(
 
 
     // 从redux中读取user数据
-    const token = '';
+    const {
+      user: {
+        token
+      }
+    } = store.getState();
     if (token) {
       config.headers['authorization'] = `Bearer ${token}`
     }
