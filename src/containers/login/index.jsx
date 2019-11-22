@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Icon, message } from 'antd';
-import { reqLogin } from '../../api/index';
+import { Form, Input, Button, Icon } from 'antd';
+import { connect } from 'react-redux';
+import { getUserAsync } from '../../redux/action-creators/user'
+// import { reqLogin } from '../../api/index';
 import logo from './logo.png';
 import './index.less'
 
@@ -9,6 +11,7 @@ const { Item } = Form; //提取From其中的组件Item
 
 // export default class Login extends Component {
 
+@connect(null, { getUserAsync })
 @Form.create()
 class Login extends Component {
   /**
@@ -46,7 +49,7 @@ class Login extends Component {
       if (!err) {
         console.log(1);
         const { username, password } = values; // 拿到valus
-        reqLogin(username, password)
+        this.props.getUserAsync(username, password)
           .then(response => {
             this.props.history.push('/'); // 成功就跳转网址
           })
@@ -141,5 +144,8 @@ class Login extends Component {
 //高阶组件 作用: 给组件绑定Form属性
 // export default Form.create()(Login);
 
+
+// connect(bull, { getUserAsync })(Login);
+// 简化要少调用一次
 
 export default Login;
