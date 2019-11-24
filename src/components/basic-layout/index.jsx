@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Layout, Breadcrumb } from 'antd';
+import { Layout } from 'antd';
 import Leftnav from './left-nav/index'
 
+import HeaderMain from './header-main'
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -28,11 +29,9 @@ class BasicLayout extends Component {
         </Sider>
         <Layout>
           <Header style={{ background: '#fff', padding: 0 }} />
-          <Content style={{ margin: '0 16px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>User</Breadcrumb.Item>
-              <Breadcrumb.Item>Bill</Breadcrumb.Item>
-            </Breadcrumb>
+          <HeaderMain />
+          <Content style={{ margin: '40px 16px 0 16px' }}>
+
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>Bill is a cat.</div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
