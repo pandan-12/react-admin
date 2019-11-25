@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Icon } from 'antd';
 import { connect } from 'react-redux';
-import { getUserAsync } from '../../redux/action-creators/user'
+import { getUserAsync } from '../../redux/action-creators/user';
 // import { reqLogin } from '../../api/index';
-import { setItem } from '../../utils/storage'
+import { setItem } from '../../utils/storage';
+import withCheckLogin from '../with-check-login/index'
 import logo from '../../assets/logo.png';
 import './index.less'
 
@@ -12,6 +13,7 @@ const { Item } = Form; //提取From其中的组件Item
 
 // export default class Login extends Component {
 
+@withCheckLogin
 @connect(null, { getUserAsync })
 @Form.create()
 class Login extends Component {
