@@ -1,5 +1,6 @@
 import {
-  GET_USER_SUCCESS
+  GET_USER_SUCCESS,
+  REMOVE_USER_SUCCESS
 } from '../action-types/user';
 // 用获取
 import {
@@ -11,6 +12,8 @@ const prevsState = getItem('user') || {};
 
 function user(prevState = prevsState, action) {
   switch (action.type) {
+    case REMOVE_USER_SUCCESS:
+      return {}; // 返回空对象
     case GET_USER_SUCCESS:
       return action.data
     default:

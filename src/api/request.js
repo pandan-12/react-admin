@@ -3,10 +3,15 @@ import listMessage from '../config/listMessage';
 import {
   message
 } from 'antd';
-import {
-  getItem
-} from '../utils/storage'
 import store from '../redux/store';
+import {
+  removeItem
+} from '../utils/storage';
+import {
+  removeUserSuccess
+} from '../redux/action-creators/user';
+import history from '../utils/history';
+
 
 // 能够拿到axios的实例对象,axios.create就能够创建一个实例对象
 // axiosInstance就是Axios实例对象,用法和axios基本一样
@@ -71,7 +76,16 @@ axiosInstance.interceptors.response.use(
     let errorMessage = '';
 
     if (error.response) {
-      errorMessage = listMessage[error.response.status] || '未知错误'
+      // 说明服务器返回了响应
+      errorMessage = listMessage[error.response.status] || '未知错误';
+
+      if (error.response.status === 401) {
+        //清空本地token
+        removeItem(); // 一定要先清空再跳转
+        store.dispatch(removeUserSuccess()); // 删除本地的token,不需要发请求,同步
+        // 首先生成action对象传给dispatch方法，dispath一旦触发就会reducers,reducers触发会更新状态,最后会重新渲染组件
+        history.push('./login');
+      }
     } else {
       if (error.message.indexOf('Network Error') !== -1) {
         errorMessage = '请检查网络';

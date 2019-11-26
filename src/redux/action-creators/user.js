@@ -3,7 +3,8 @@ import {
 } from '../../api/index'
 
 import {
-  GET_USER_SUCCESS
+  GET_USER_SUCCESS,
+  REMOVE_USER_SUCCESS
 } from '../action-types/user'; // 引过来常量模块
 
 
@@ -11,6 +12,10 @@ import {
 const getuserSuccess = (user) => ({
   type: GET_USER_SUCCESS,
   data: user
+})
+
+export const removeUserSuccess = () => ({
+  type: REMOVE_USER_SUCCESS, // 删除不需要传参
 })
 
 
