@@ -43,19 +43,18 @@ class Login extends Component {
   }
 
   login = (e) => {
-    console.log(1);
 
     const { form } = this.props;
 
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
-        console.log(1);
         const { username, password } = values; // 拿到valus
         this.props.getUserAsync(username, password)
           .then(response => {
             // 持久化存储用户数据
             setItem('user', response)
+
             this.props.history.push('/'); // 成功就跳转网址
           })
           .catch((err) => {

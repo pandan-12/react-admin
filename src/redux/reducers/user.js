@@ -8,13 +8,16 @@ import {
 } from '../../utils/storage'
 // 定义一个判断有值用无值空
 
-const prevsState = getItem('user') || {};
+const State = getItem('user') || {};
 
-function user(prevState = prevsState, action) {
+function user(prevState = State, action) {
+  console.log(action)
   switch (action.type) {
     case REMOVE_USER_SUCCESS:
+        console.log(11)
       return {}; // 返回空对象
     case GET_USER_SUCCESS:
+      
       return action.data
     default:
       return prevState

@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { Layout } from 'antd';
 import Leftnav from './left-nav/index'
 
+import withCheckLogin from '../../containers/with-check-login/index';
+
 import HeaderMain from './header-main'
 
 const { Header, Content, Footer, Sider } = Layout;
 
+@withCheckLogin
 class BasicLayout extends Component {
   state = {
     collapsed: false,

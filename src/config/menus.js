@@ -6,7 +6,7 @@ export default [{
   {
     title: '商品',
     icon: 'appstore',
-    path: '/user',
+    path: '/product',
     children: [{
         title: '分类管理',
         icon: 'bars',

@@ -24,8 +24,11 @@ export const getUserAsync = (username, Password) => {
   return (dispatch) => {
     return reqLogin(username, Password)
       .then((response) => {
-        const action = getuserSuccess(response) // 创建axios
-        dispatch(action);
+        // const action = {
+        //   type: GET_USER_SUCCESS,
+        //   data: response
+        // } // 创建axios
+        dispatch(getuserSuccess(response));
         return response
       })
   }

@@ -11,7 +11,6 @@ const withCheckLogin = WrappedComponent => {
     class extends Component {
       static displayName = `CheckLogin(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
       render() {
-        console.log(this.props);
 
         const { token, location, ...rest } = this.props;
         // ...rest 剩下所有没有被解构赋值的参数
