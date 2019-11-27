@@ -1,12 +1,23 @@
 import React, { Component } from 'react'
-import { Button, Icon } from 'antd';
+import { Button, Icon, Modal } from 'antd';
 import './index.less';
 import screenfull from 'screenfull'; // 切换全屏
+import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { removeItem } from '../../../utils/storage';
+import { removeUserSuccess } from '../../../redux/action-creators/user'
+import { withRouter } from 'react-router-dom';
 
-
-export default class HeaderMain extends Component {
+@withRouter
+@connect((state) => ({
+  username: state.user.user.username
+  // 状态拿到所有数据,user拿到user数据(一个是token,一个是user),user是个对象拿到username
+}), { removeUserSuccess })
+@withTranslation()
+class HeaderMain extends Component {
   state = {
-    isFullscreen: false
+    isFullscreen: false,
+    isEnglish: this.props.i18n.language === 'en' ? true : false
   };
 
 
@@ -17,6 +28,28 @@ export default class HeaderMain extends Component {
   change = () => {
     this.setState({
       isFullscreen: !this.state.isFullscreen
+    });
+  }
+
+  //切换语言
+  changeLang = () => {
+    const isEnglish = !this.state.isEnglish;
+    this.setState({
+      isEnglish
+    })
+    this.props.i18n.changeLanguage(isEnglish ? 'en' : 'zh');
+  }
+
+  //退出
+  loginout = () => {
+    Modal.confirm({
+      title: '你特么确定要退？',
+      onOk: () => {
+        console.log(233)
+        removeItem('user'); // 清空loaclStorage
+        this.props.removeUserSuccess(); // 清空redux
+        this.props.history.replace('/login') // 跳转到login页面
+      }
     });
   }
 
@@ -31,15 +64,15 @@ export default class HeaderMain extends Component {
   }
 
   render() {
-    const { isFullscreen } = this.state;
-
+    const { isFullscreen, isEnglish } = this.state;
+    const { username } = this.props;
     return (
       <div className='header-main'>
         <div className='header-main-top'>
           <Button size='small' onClick={this.toggleScreen}><Icon type={isFullscreen ? "fullscreen-exit" : "fullscreen"} /></Button>
-          <Button size='small' className='language-btn'>English</Button>
-          <span>hello,shadiao</span>
-          <Button type='link' size='small'>退&nbsp;&nbsp;出</Button>
+          <Button size='small' className='language-btn' onClick={this.changeLang}>{isEnglish ? '中文' : 'English'}</Button>
+          <span>hello,{username}</span>
+          <Button type='link' size='small' onClick={this.loginout}>退&nbsp;&nbsp;出</Button>
         </div>
         <div className='header-main-bottom'>
           <h3>首页</h3>
@@ -49,3 +82,5 @@ export default class HeaderMain extends Component {
     )
   }
 }
+
+export default HeaderMain

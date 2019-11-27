@@ -1,0 +1,21 @@
+{
+  "layout": {
+    "leftNav": {
+      "title": "Backend",
+      "home": "Home",
+      "products": "Products",
+      "category": "Category",
+      "product": "Product",
+      "user": "User",
+      "role": "Role",
+      "charts": "Charts",
+      "bar": "Bar",
+      "line": "Line",
+      "pie": "Pie"
+    }
+  },
+  "home": {
+
+  }
+
+}
