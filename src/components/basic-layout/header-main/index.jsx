@@ -7,6 +7,7 @@ import { removeItem } from '../../../utils/storage';
 import { removeUserSuccess } from '../../../redux/action-creators/user'
 import { withRouter } from 'react-router-dom';
 import menus from '../../../config/menus.js';
+import dayjs from 'dayjs';
 
 import './index.less';
 
@@ -17,12 +18,32 @@ import './index.less';
 }), { removeUserSuccess })
 @withTranslation()
 class HeaderMain extends Component {
+  formatDate = (date) => {
+    date = new Date(date); //获取时间
+    const year = date.getFullYear(); // 获取年份
+    const month = this.addZero(date.getMonth() + 1); // 获取月份
+    const day = this.addZero(date.getDate()); // 获取日期
+    const hours = this.addZero(date.getHours()); // 获取小时
+    const minutes = this.addZero(date.getMinutes()); // 获取分钟
+    const seconds = this.addZero(date.getSeconds()); // 获取秒
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
+  // 不到10前面补0
+  addZero = number => {
+    if (number < 10) return '0' + number;
+    return number;
+  }
+
   state = {
     isFullscreen: false,
     isEnglish: this.props.i18n.language === 'en' ? true : false,
     title: '',
-    pathname: ''
+    pathname: '',
+    // date: this.formatDate(Date.now())
+    date: dayjs().format('YYYY-MM-DD HH:mm:ss')
   };
+
 
 
   toggleScreen = () => {
@@ -59,12 +80,21 @@ class HeaderMain extends Component {
 
   componentDidMount() {
     screenfull.on('change', this.change);
+    this.timer = setInterval(() => { //只执行一次放在componentDidMount
+      this.setState({
+        // date: this.formatDate(Date.now())
+        date: dayjs().format('YYYY-MM-DD HH:mm:ss')
+      })
+    }, 1000)
   }
 
   componentWillUnmount() {
     //解绑事件 解绑事件的回调函数和绑定事件的回调函数必须一致
     screenfull.off('change', this.change); //解绑必须是同一个函数,所以直接定义change函数,这样再传给on和off
+
+    clearInterval(this.timer); //解绑
   }
+
 
   static getDerivedStateFromProps(nextProps, prevState) {
     // getDerivedStateFromProps根据属性生成状态
@@ -104,7 +134,7 @@ class HeaderMain extends Component {
 
 
   render() {
-    const { isFullscreen, isEnglish, title } = this.state;
+    const { isFullscreen, isEnglish, title, date } = this.state;
     const { username, t } = this.props;
     return (
       <div className='header-main'>
@@ -116,7 +146,7 @@ class HeaderMain extends Component {
         </div>
         <div className='header-main-bottom'>
           <h3>{t(title)}</h3>
-          <span>我楞尼玛败讲了可照来</span>
+          <span>{date}</span>
         </div>
       </div>
     )

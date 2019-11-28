@@ -5,7 +5,7 @@ import Leftnav from './left-nav/index'
 import withCheckLogin from '../../containers/with-check-login/index';
 
 import HeaderMain from './header-main'
-
+import ThemePicker from '../basic-layout/theme-piicker'
 const { Header, Content, Footer, Sider } = Layout;
 
 @withCheckLogin
@@ -41,6 +41,7 @@ class BasicLayout extends Component {
           </Content>
           <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
         </Layout>
+        <ThemePicker />
       </Layout>
     );
   }
