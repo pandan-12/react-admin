@@ -20,11 +20,21 @@ export const reqGetCategories = () => axiosInstance({
   url: '/category/get',
 })
 
-//请求添加分类列表数据
+//请求添加分类数据
 export const reqAddCategory = (categoryName) => axiosInstance({
   method: 'POST',
   url: '/category/add',
   data: {
+    categoryName
+  }
+})
+
+//请求修改分类数据
+export const reqModifyCategory = (categoryId, categoryName) => axiosInstance({
+  method: 'POST',
+  url: '/category/update',
+  data: {
+    categoryId,
     categoryName
   }
 })
