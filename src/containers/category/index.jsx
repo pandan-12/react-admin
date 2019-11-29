@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import { Card, Table, Button, Icon } from 'antd';
+import { Card, Table, Button, Icon, Modal } from 'antd';
 import { connect } from 'react-redux';
-import { getCategoriesAsync } from '../../redux/action-creators/category'
+import { getCategoriesAsync, addCategoryAsync } from '../../redux/action-creators/category'
+import AddCategoryForm from './add-category-form';
 
 @connect(
   (state) => ({ categories: state.categories }),
-  { getCategoriesAsync }
+  { getCategoriesAsync, addCategoryAsync }
 )
 class Category extends Component {
+  state = {
+    addCategoryVisible: false
+  }
   componentDidMount() {
     this.props.getCategoriesAsync()
   }
@@ -33,32 +37,79 @@ class Category extends Component {
 
   ];
 
-  render() {
-    const { categories } = this.props
+  // 添加分类
+  addCategory = () => {
+    this.AddCategoryForm.props.form.validateFields(async (error, values) => {
+      if (!error) {
+        const { categoryName } = values;
+        //发送请求(更新后台数据),更新redux数据
+        await this.props.addCategoryAsync(categoryName)
+        // //等待添加分类完成,才隐藏对话框
+        // this.setState({
+        //   addCategoryVisible: false
+        // })
+        this.addHidden();
+      }
+    })
+  }
 
+  // 取消隐藏
+  addHidden = () => {
+    this.setState({
+      addCategoryVisible: false
+    })
+    setTimeout(() => {
+      // 清空表单数据
+      this.AddCategoryForm.props.form.resetFields(); // 不传参清空所有
+    }, 500)
+  }
+
+  show = () => {
+    this.setState({
+      addCategoryVisible: true
+    })
+  }
+
+  render() {
+    const { categories } = this.props;
+    const { addCategoryVisible } = this.state
 
     return (
-      <Card title="分类列表"
-        extra={
-          <Button type='primary'>
-            <Icon type='plus' />
-            分类列表
+      <div>
+        <Card title="分类列表"
+          extra={
+            <Button type='primary' onClick={this.show}>
+              <Icon type='plus' />
+              分类列表
           </Button>}>
-        <Table
-          columns={this.columns}
-          dataSource={categories}
-          bordered
-          rowKey='_id'
-          pagination={{
-            showQuickJumper: true, // 显示跳转某页
-            showSizeChanger: true,  // 可以改变页数
-            pageSizeOptions: [ // 指定每页显示多少条
-              '3', '6', '9'
-            ],
-            defaultPageSize: 3 // 默认每页显示10条,改成3条
-          }}
-        />
-      </Card>
+          <Table
+            columns={this.columns}
+            dataSource={categories}
+            bordered
+            rowKey='_id'
+            pagination={{
+              showQuickJumper: true, // 显示跳转某页
+              showSizeChanger: true,  // 可以改变页数
+              pageSizeOptions: [ // 指定每页显示多少条
+                '3', '6', '9'
+              ],
+              defaultPageSize: 3 // 默认每页显示10条,改成3条
+            }}
+          />
+        </Card>
+
+        <Modal
+          title="添加分类"
+          visible={addCategoryVisible}
+          onOk={this.addCategory}
+          cancelText='取消'
+          onCancel={this.addHidden} // 隐藏
+          width={500}
+        >
+          <AddCategoryForm wrappedComponentRef={(form) => this.AddCategoryForm = form} />
+          {/* wrappedComponentRef是function的ref的用法 挂载到AddCategoryForm值等于form*/}
+        </Modal>
+      </div>
     )
   }
 }
